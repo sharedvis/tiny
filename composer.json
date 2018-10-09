@@ -1,0 +1,29 @@
+{
+    "name": "sharedvis/tiny",
+    "description": "SharedVis API PHP SDK",
+    "keywords": ["SharedVis", "API", "SDK"],
+    "homepage": "http://github.com/sharedvis/tiny",
+    "authors": [
+        {
+            "name": "Rolies Deby",
+            "email": "rolies106@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "ext-phalcon": ">=3.0.0",
+        "rolies106/hmac": "dev-master",
+        "mashape/unirest-php": "2.*",
+        "ruflin/elastica": "5.2.*",
+        "php-amqplib/php-amqplib": "2.6.0",
+        "sentry/sentry": "^1.8.0",
+        "danzabar/phalcon-cli": "^1.0"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "Tiny\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
