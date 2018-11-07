@@ -194,41 +194,7 @@ class RabbitMq implements \Tiny\Services\Interfaces\Queue
      * @param  string $data Queue callback
      * @return void
      */
-    public function listen($queue_name, $callback)
-    {
-        $channel = $this->initListenChannel($queue_name, $callback);
-
-        while (count($channel->callbacks)) {
-            try {
-                echo "Waiting for incoming messages\n";
-                $channel->wait();
-            } catch (\Exception $e) {
-                do {
-                    echo "Re-creating connection... sleep for " . $this->reconnect_delay . " seconds\n";
-                    sleep($this->reconnect_delay);
-
-                    echo "Try to re-connect to Rabbit MQ server...\n";
-                    try {
-                        $this->_connection->reconnect();
-                        $channel = $this->initListenChannel($queue_name, $callback);
-                    } catch (\Exception $ex) {
-                        echo "Failed to re-connect...\n";
-                    }
-                } while (!$this->_connection->isConnected());
-            }
-
-        }
-        $channel->close();
-        $connection->close();
-    }
-
-    /**
-     * Initialize channel for listen action
-     * @param $queue_name
-     * @param $callback
-     * @return channel
-     */
-    protected function initListenChannel($queue_name, $callback)
+    public function listen($queue_name, $callback, $timeout = 0)
     {
         $channel = $this->_connection->channel();
         $channel->queue_declare(
@@ -262,8 +228,12 @@ class RabbitMq implements \Tiny\Services\Interfaces\Queue
             false,                  #no wait - TRUE: the server will not respond to the method. The client should not wait for a reply method
             $callback               #callback
         );
-
-        return $channel;
+        while(count($channel->callbacks)) {
+            echo "Waiting for incoming messages\n";
+            $channel->wait(null, false, $timeout);
+        }
+        $channel->close();
+        $connection->close();
     }
 
     /**
